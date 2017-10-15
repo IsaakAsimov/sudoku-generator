@@ -1,6 +1,7 @@
 import Data.List
 import System.Random
-import System.Environment
+import System.Environment (getArgs)
+import Shuffle (shuffle)
 
 type Grid       = [[Int]]
 type Coordinate = (Int, Int)
@@ -28,21 +29,24 @@ noIlligal grid (x,y) = all notRepited [column, block, grid!!x]
 findEmpty :: Grid -> Coordinate
 findEmpty xs = head [(x,y) | x <- [0..8], y <- [0..8], xs !! x !! y == 0]
 
-backtrack :: Grid -> Coordinate -> Int -> [Int] -> Grid
-backtrack xs coor n l
-                  | not (noIlligal xs coor) = []
-                  | n == 0                  = xs
-                  | otherwise               = options xs (findEmpty xs) l n l
+backtrack :: Grid -> Coordinate -> Int -> [Int] -> StdGen -> Grid
+backtrack xs coor n l gen
+        | not (noIlligal xs coor) = []
+        | n == 0                  = xs
+        | otherwise               = options xs nextCoor l n newl newGen
+  where
+    (newl, newGen) = shuffle l gen
+    nextCoor       = findEmpty xs
 
-options :: Grid -> Coordinate -> [Int] -> Int -> [Int] -> Grid
-options xs (x,y) []     n l = []
-options xs (x,y) (o:op) n l = if null sdk
-                                 then options xs (x,y) op n l
+options :: Grid -> Coordinate -> [Int] -> Int -> [Int] -> StdGen -> Grid
+options xs (x,y) []     n l gen = []
+options xs (x,y) (o:op) n l gen = if null sdk
+                                 then options xs (x,y) op n l gen
                                  else sdk
   where
-    sdk = backtrack (assocIn xs (x,y) o) (x,y) (n-1) l
+    sdk = backtrack (assocIn xs (x,y) o) (x,y) (n-1) l gen
 
-remove :: (RandomGen t) => Int -> Grid -> t -> Grid
+remove :: Int -> Grid -> StdGen -> Grid
 remove 0 xs g = xs
 remove n xs g = remove (n-1) (assocIn xs (op!!i) 0) ng
   where
@@ -59,10 +63,9 @@ printGrid xs = mapM_ putStrLn $ line : intersperse line strl2 ++ [line]
 
 main :: IO ()
 main = do
-  n    <- fmap (read . head) getArgs
-  rand <- fmap (randomR (0, 362879 :: Int)) newStdGen
-  let emptyBoard =  replicate 9 (replicate 9 0)
-      list       =  permutations [1..9] !! fst rand
-      sdk        =  backtrack emptyBoard (0,0) 81 list
+  let emptyBoard = replicate 9 (replicate 9 0)
+  n           <- fmap (read . head) getArgs
+  (list, gen) <- fmap (shuffle [1..9]) newStdGen
+  sdk         <- fmap (backtrack emptyBoard (0,0) 81 list) newStdGen
 
-  printGrid $ remove (81 - n) sdk (snd rand)
+  printGrid $ remove (81 - n) sdk gen
