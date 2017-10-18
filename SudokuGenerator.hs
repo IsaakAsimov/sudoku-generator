@@ -1,7 +1,7 @@
-import Data.List
-import System.Random
+import Data.List          (group, intercalate, intersperse, sort)
+import Shuffle            (shuffle)
 import System.Environment (getArgs)
-import Shuffle (shuffle)
+import System.Random      (StdGen, newStdGen, randomR)
 
 type Grid       = [[Int]]
 type Coordinate = (Int, Int)
