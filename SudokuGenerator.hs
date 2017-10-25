@@ -23,9 +23,9 @@ remove n xs g = remove (n-1) (assocIn xs (op!!i) 0) ng
 
 backtrack :: Grid -> Coordinate -> Int -> [Int] -> StdGen -> Grid
 backtrack xs coor n l gen
-                | not (noIlligal xs coor) = []
-                | n == 0                  = xs
-                | otherwise               = options xs nextCoor l n newl newGen
+                | not (notIllegal xs coor) = []
+                | n == 0                   = xs
+                | otherwise                = options xs nextCoor l n newl newGen
   where
     (newl, newGen) = shuffle l gen
     nextCoor       = findEmpty xs
@@ -37,8 +37,8 @@ options xs (x,y) (o:op) n l gen | null sdk  = options xs (x,y) op n l gen
   where
     sdk = backtrack (assocIn xs (x,y) o) (x,y) (n-1) l gen
 
-noIlligal :: Grid -> Coordinate -> Bool
-noIlligal grid (x,y) = all notRepited [column, block, grid!!x]
+notIllegal :: Grid -> Coordinate -> Bool
+notIllegal grid (x,y) = all notRepeated [column, block, grid!!x]
   where
     column  = [grid!!a!!y | a <- [0..8]]
     blocksB = [ [((0,2), (0,2)), ((0,2), (3,5)), ((0,2), (6,8))]
@@ -47,8 +47,8 @@ noIlligal grid (x,y) = all notRepited [column, block, grid!!x]
     block   = [grid!!a!!b | a <- [g1..g2], b <- [h1..h2]]
     ((g1, g2), (h1, h2)) = blocksB !! div x 3 !! div y 3
 
-notRepited :: [Int] -> Bool
-notRepited = all (==1) . map length . group . sort . filter(/=0)
+notRepeated :: [Int] -> Bool
+notRepeated = all (==1) . map length . group . sort . filter(/=0)
 
 findEmpty :: Grid -> Coordinate
 findEmpty xs = head [(x,y) | x <- [0..8], y <- [0..8], xs !! x !! y == 0]
