@@ -1,18 +1,11 @@
-import Data.List          (group, intercalate, intersperse, sort)
-import Shuffle            (shuffle)
-import System.Environment (getArgs)
-import System.Random      (StdGen, newStdGen, randomR)
+module GeneratorFunctions (backtrack, newStdGen, remove) where
+
+import Data.List     (group, sort)
+import Shuffle       (shuffle)
+import System.Random (StdGen, newStdGen, randomR)
 
 type Grid       = [[Int]]
 type Coordinate = (Int, Int)
-
-main :: IO ()
-main = do
-    let emptyBoard = replicate 9 (replicate 9 0)
-    n           <- (read . head)  <$> getArgs
-    (list, gen) <- shuffle [1..9] <$> newStdGen
-    sdk         <- backtrack emptyBoard (0,0) 81 list <$> newStdGen
-    printGrid $ remove (81 - n) sdk gen
 
 remove :: Int -> Grid -> StdGen -> Grid
 remove 0 xs g = xs
@@ -58,10 +51,3 @@ assoc (x:xs) n e = if n == 0 then e : xs else x : assoc xs (n-1) e
 
 assocIn :: [[a]] -> Coordinate -> a -> [[a]]
 assocIn xs (x, y) e = assoc xs x $ assoc (xs!!x) y e
-
-printGrid :: Grid -> IO ()
-printGrid xs = mapM_ putStrLn $ line : intersperse line strl2 ++ [line]
-  where
-    strl2 = map (\x -> "| " ++ intercalate " | " x ++ " |") strl1
-    strl1 = map (map (\x -> if x == 0 then " " else show x)) xs
-    line     = "+---+---+---+---+---+---+---+---+---+"

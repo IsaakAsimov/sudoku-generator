@@ -2,9 +2,9 @@ module Shuffle (shuffle) where
 
 -- Code from: https://wiki.haskell.org/Random_shuffle
 
-import Data.Array.ST
 import Control.Monad
 import Control.Monad.ST
+import Data.Array.ST
 import Data.STRef
 import System.Random
 

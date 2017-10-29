@@ -10,12 +10,17 @@ After the finished game of sudoku is created, it removes a certain amount
 of numbers from the grid, creating an not finished but possible to complete,
 game of sudoku.
 
+## Build
+```
+stack clean && stack setup && stack build
+```
+
 ## Examples:
 
 If for example we want a sudoku grid with just 10 starting number:
 
 ```
-$ ./SudokuGenerator 10
+$ stack exec sudoku-generator-exe 10
 +---+---+---+---+---+---+---+---+---+
 |   |   | 8 |   |   |   |   |   |   |
 +---+---+---+---+---+---+---+---+---+
@@ -38,7 +43,7 @@ $ ./SudokuGenerator 10
 ```
 Or with 45 starting numbers:
 ```
-$ ./SudokuGenerator 45
+$ stack exec sudoku-generator-exe 45
 +---+---+---+---+---+---+---+---+---+
 |   | 6 | 2 | 3 |   | 9 | 4 |   |   |
 +---+---+---+---+---+---+---+---+---+
