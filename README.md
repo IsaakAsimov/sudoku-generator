@@ -7,8 +7,7 @@ backtrack. In this backtrack, the order in which the numbers are tested is
 random, so the resulting grid, wont be the same every time.
 
 After the finished game of sudoku is created, it removes a certain amount
-of numbers from the grid, creating an not finished but possible to complete,
-game of sudoku.
+of numbers from the grid, creating a fresh and solvable game of sudoku.
 
 ## Build
 ```
@@ -17,7 +16,7 @@ stack clean && stack setup && stack build
 
 ## Examples:
 
-If for example we want a sudoku grid with just 10 starting number:
+For example if we want a sudoku grid with just 10 starting numbers:
 
 ```
 $ stack exec sudoku-generator-exe 10
